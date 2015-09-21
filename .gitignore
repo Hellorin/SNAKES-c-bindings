@@ -30,3 +30,13 @@
 
 # Debug files
 *.dSYM/
+
+# Build temp files
+libsnk.c
+libsnk.h
+
+# Compiled file
+snktest
+
+# Result files
+*.pdf
