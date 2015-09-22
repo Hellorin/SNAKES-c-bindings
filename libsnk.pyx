@@ -49,6 +49,25 @@ cdef public int addplace (char *net, char *place_name, int tokens) :
     except :
         return 0
 
+cdef public int addplace_f (char *net, char *place_name, float token) :
+    '''
+        Add a place with a floating value token to a given Petri net
+
+        @param net
+            The name of the Petri net to add a place
+        @param place_name
+            Name of the place to add
+        @param tokens
+            Number of tokens in the place created
+        @return
+            1 if the place was added successfully, 0 otherwise
+    '''
+    try :
+        nets[net].add_place(Place(place_name, token))
+        return 1
+    except :
+        return 0
+
 cdef public int addtrans (char *net, char *trans_name) :
     '''
         Add a transition to a given Petri net
@@ -89,6 +108,36 @@ cdef public int addarc (char *net, char *src, char *dst, int weight) :
             arc = Value(dot)
         else :
             arc = MultiArc([Value(dot) for i in range(weight)])
+        if nets[net].has_place(src) :
+            nets[net].add_input(src, dst, arc)
+        else :
+            nets[net].add_output(dst, src, arc)
+        return 1
+    except :
+        return 0
+
+cdef public int addarc_f (char *net, char *src, char *dst, float weight) :
+    '''
+        Add an arc from a src to a dst with a given weight
+        to a given Petri net
+
+        @param net
+            The name of the Petri net to add an arc
+        @param src
+            Name of the source place or the transition of the arc
+        @param dst
+            Name of the destination place or transition of the arc
+        @param weight
+            Weight of the arc
+        @return
+            1 if the arc was added successfully, 0 otherwise
+    '''
+    try :
+        if weight <= 0 :
+            return 0
+        else :
+            arc = Value(weight)
+
         if nets[net].has_place(src) :
             nets[net].add_input(src, dst, arc)
         else :
